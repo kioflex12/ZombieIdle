@@ -23,7 +23,7 @@ namespace Utils.Logger.Handlers
             {
                 return;
             }
-            Write(new LogItemExtension(tag, type, message));
+            Write(new LogItemExt(tag, type, message));
         }
 
         public void Trace(int tag, LogType type, Object context, string message)
@@ -32,7 +32,7 @@ namespace Utils.Logger.Handlers
             {
                 return;
             }
-            Write(new LogItemExtension(tag, type, message, context));
+            Write(new LogItemExt(tag, type, message, context));
         }
 
         public void TraceException(Exception exception, bool important) {
@@ -42,7 +42,7 @@ namespace Utils.Logger.Handlers
             Debug.LogError(exception.ToString());
         }
 
-        private void Write(LogItemExtension item)
+        private void Write(LogItemExt item)
         {
             var tagStr = _utility.GetName(item.Tag);
             if ( item.Context == null )
