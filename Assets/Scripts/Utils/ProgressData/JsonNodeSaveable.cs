@@ -2,10 +2,12 @@
 // ReSharper disable UnusedTypeParameter
 // ReSharper disable IdentifierTypo
 
+using Utils.Json;
+
 namespace Utils.ProgressData
 {
     public interface JsonNodeSaveable<T>
     {
-        void Save(T jsonNode);
+        void Save(JsonElement<T> jsonElement);
     }
 }

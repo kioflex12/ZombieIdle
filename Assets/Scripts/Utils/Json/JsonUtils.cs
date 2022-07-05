@@ -22,14 +22,13 @@ namespace Utils.Json
                 }
                 else
                 {
-                    loadResult = JsonLoadResult.NotFound();
+                    loadResult = JsonLoadResult.NotFound(new FileNotFoundException());
                 }
 
                 if (!loadResult.Success)
                 {
-                    Log.TraceFormat(LogTag.Json, "Failed LoadJsonFromSave: name: '{0}'", name);
+                    Log.TraceFormat(LogTag.Json, "Failed LoadJsonFromSave: name: '{0}' , expt: {1}", name, loadResult.Exception);
                     loadResult = JsonLoadResult.Failed();
-
                 }
 
                 return loadResult;
@@ -42,18 +41,21 @@ namespace Utils.Json
             }
         }
 
-        private static string GetDocumentPath(string rootPath, string name) => Path.Combine(rootPath, name + ".json");
+        private static string GetDocumentPath(string rootPath, string name) => Path.Combine(rootPath, name);
 
         private static string GetDefaultDataDirectory()
         {
             return Application.persistentDataPath;
         }
 
+        public static string GetDefaultDocumentPath(string name) =>
+            GetDocumentPath(GetDefaultDataDirectory(), name);
+
         public static JsonSaveResult SaveJsonContent(string content, string name) =>
             SaveJsonContentToDirectory(content, name, GetDefaultDataDirectory());
 
         public static JsonSaveResult SaveJsonElement<T>(JsonElement<T> jsonDoc) =>
-            SaveJsonContentToDirectory(JsonUtility.ToJson(jsonDoc.Data), jsonDoc.Name, GetDefaultDataDirectory());
+            SaveJsonContentToDirectory(JsonUtility.ToJson(jsonDoc.SerilizedData), jsonDoc.Name, GetDefaultDataDirectory());
 
         public static JsonSaveResult SaveJsonContentToDirectory(string content, string name, string rootPath)
         {

@@ -3,12 +3,12 @@ namespace Utils.Json
     public class JsonElement<T>
     {
         public string Name;
-        public T Data;
+        public T SerilizedData;
 
-        public JsonElement(string name, T data)
+        public JsonElement(string name, T serilizedData)
         {
             Name = name;
-            Data = data;
+            SerilizedData = serilizedData;
         }
     }
 }

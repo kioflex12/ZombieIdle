@@ -19,6 +19,10 @@ namespace Utils.Logger
         {
             Handler.Trace(tag,LogType.Warning,message);
         }
+        public static void TraceError(int tag, string message)
+        {
+            Handler.Trace(tag,LogType.Error,message);
+        }
 
         public static void Trace(int tag, LogType type, string message) {
             Handler.Trace(tag, type, message);
