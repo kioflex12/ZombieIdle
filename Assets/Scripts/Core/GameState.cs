@@ -11,6 +11,7 @@ namespace Core
     public sealed class GameState : GameComponent
     {
         public GameStateSerializationController SerializationController { get; private set; }
+
         protected override void Awake()
         {
             base.Awake();

@@ -71,7 +71,8 @@ namespace Utils.Json
             }
         }
 
-        public static void DeleteSavedJsonDocument(string name) {
+        public static void DeleteSavedJsonDocument(string name)
+        {
             DeleteSavedJsonDocumentInDirectory(name, GetDefaultDataDirectory());
         }
 

@@ -2,7 +2,7 @@
 
 using Utils.Json;
 
-namespace Utils.ProgressData
+namespace Utils.JsonNode
 {
     public interface JsonNodeLoadable<T>
     {

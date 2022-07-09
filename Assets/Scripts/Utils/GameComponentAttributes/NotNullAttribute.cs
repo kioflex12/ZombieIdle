@@ -6,7 +6,9 @@ namespace Utils.GameComponentAttributes
 
     public sealed class NotNullAttribute : BaseGameComponentAttribute
     {
-        public NotNullAttribute() : this(true) { }
+        public NotNullAttribute() : this(true)
+        {
+        }
 
         public NotNullAttribute(bool checkPrefab = true) : base(checkPrefab)
         {

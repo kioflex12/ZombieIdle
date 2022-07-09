@@ -7,11 +7,12 @@ namespace Utils.Logger.Handlers
 {
     public sealed class UnityTraceHandler
     {
-        readonly LogTagUtility  _utility;
+        private readonly LogTagUtility  _utility;
 
         private static UnityTraceHandler _instance;
 
-        private UnityTraceHandler(LogTagUtility utility) {
+        private UnityTraceHandler(LogTagUtility utility)
+        {
             _utility = utility;
         }
 
@@ -36,7 +37,8 @@ namespace Utils.Logger.Handlers
         }
 
         public void TraceException(Exception exception, bool important) {
-            if ( string.IsNullOrEmpty(exception.StackTrace) ) {
+            if ( string.IsNullOrEmpty(exception.StackTrace) )
+            {
                 exception = WrapperException.Wrap(exception);
             }
             Debug.LogError(exception.ToString());
@@ -47,15 +49,22 @@ namespace Utils.Logger.Handlers
             var tagStr = _utility.GetName(item.Tag);
             if ( item.Context == null )
             {
-                if ( item.Type == LogType.Log ) {
+                if ( item.Type == LogType.Log )
+                {
                     Debug.unityLogger.Log(tagStr, item.Message);
-                } else {
+                }
+                else
+                {
                     Debug.unityLogger.Log(item.Type, tagStr, item.Message);
                 }
-            } else {
-                if ( item.Type == LogType.Log ) {
+            }
+            else {
+                if ( item.Type == LogType.Log )
+                {
                     Debug.unityLogger.Log(tagStr, item.Message, item.Context);
-                } else {
+                }
+                else
+                {
                     Debug.unityLogger.Log(item.Type, tagStr, item.Message, item.Context);
                 }
             }

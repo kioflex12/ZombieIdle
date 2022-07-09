@@ -5,7 +5,9 @@ namespace Behavior.Gameplay
 {
     public abstract class GameComponent : MonoBehaviour
     {
-        protected virtual void CheckDescription(){ }
+        protected virtual void CheckDescription()
+        {
+        }
 
         protected virtual void Awake()
         {
