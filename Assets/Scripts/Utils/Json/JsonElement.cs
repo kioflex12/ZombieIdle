@@ -2,13 +2,13 @@ namespace Utils.Json
 {
     public class JsonElement<T>
     {
-        public string Name;
-        public T SerilizedData;
+        public readonly string Name;
+        public readonly T SerializedData;
 
-        public JsonElement(string name, T serilizedData)
+        public JsonElement(string name, T serializedData)
         {
             Name = name;
-            SerilizedData = serilizedData;
+            SerializedData = serializedData;
         }
     }
 }

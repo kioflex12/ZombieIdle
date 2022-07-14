@@ -5,6 +5,14 @@ namespace Behavior.Gameplay
 {
     public abstract class GameComponent : MonoBehaviour
     {
+        protected virtual void Init()
+        {
+        }
+
+        protected virtual void DeInit()
+        {
+        }
+
         protected virtual void CheckDescription()
         {
         }
@@ -17,6 +25,7 @@ namespace Behavior.Gameplay
             }
             GameComponentUtils.CheckAttributes(this);
             CheckDescription();
+            Init();
         }
 
         protected void OnValidate()
@@ -26,6 +35,11 @@ namespace Behavior.Gameplay
             }
             GameComponentUtils.CheckAttributes(this);
             CheckDescription();
+        }
+
+        private void OnDestroy()
+        {
+            DeInit();
         }
     }
 }

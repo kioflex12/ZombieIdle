@@ -39,6 +39,7 @@ namespace Utils.Logger
             Handler.Trace(tag, LogType.Warning, context, message);
         }
 
+
         public static void TraceError(int tag, Object context, string message)
         {
             Handler.Trace(tag, LogType.Error, context, message);
@@ -76,6 +77,11 @@ namespace Utils.Logger
 
         [StringFormatMethod("message")]
         public static void TraceErrorFormat(int tag, Object context, string message, params object[] args)
+        {
+                Handler.Trace(tag, LogType.Error, context, string.Format(message, args));
+        }
+        [StringFormatMethod("message")]
+        public static void TraceWarningFormat(int tag, Object context, string message, params object[] args)
         {
                 Handler.Trace(tag, LogType.Error, context, string.Format(message, args));
         }

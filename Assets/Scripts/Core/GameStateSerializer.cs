@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using Core.State;
+using JetBrains.Annotations;
 using UnityEngine;
 using Utils;
 using Utils.Json;
@@ -5,20 +9,21 @@ using Utils.Logger;
 
 namespace Core
 {
-    static class GameStateSerializer
+    public static class GameStateSerializer
     {
         private const string LocalSaveStateName = "localSave.xml";
 
         public static string GetStatePath(string stateName) => JsonUtils.GetDefaultDocumentPath(stateName);
 
-        public static bool TryLoadSavedState(this GameState state)
+        public static bool TryLoadSavedState(this GameState state, List<BaseStateController> stateControllers)
         {
             Log.Trace(LogTag.State, "TryLoadSavedState");
-            var isLoaded = TryLoadStateByName(state,LocalSaveStateName);
+            var isLoaded = TryLoadStateByName(state,LocalSaveStateName, stateControllers);
             return isLoaded;
         }
 
-        static bool TryLoadStateByName(GameState state, string stateName)
+        static bool TryLoadStateByName(GameState state, string stateName,
+            List<BaseStateController> baseStateControllers)
         {
             var loadResult = JsonUtils.LoadJsonDocumentFromSave(stateName);
             var isLoaded = ValidateLoadResult(loadResult);
@@ -28,22 +33,27 @@ namespace Core
                 stateName, isLoaded);
             if (loadResult.Success)
             {
-                LoadJson(state, LocalSaveStateName, loadResult.Document);
+                LoadJson(LocalSaveStateName, loadResult.Document, baseStateControllers);
             }
 
             return isLoaded;
         }
 
-        private static void LoadJson(GameState state, string stateName, string jsonDocument )
+        private static void LoadJson(string stateName, string jsonDocument,
+            List<BaseStateController> baseStateControllers)
         {
             var statePath = GetStatePath(stateName);
             var hasValues = jsonDocument != string.Empty;
             if (hasValues)
             {
                 Log.TraceFormat(LogTag.State, "LoadStateByName: Path: '{0}'", statePath);
-                var loadResult = JsonUtility.FromJson<GameStateSerializationController>(jsonDocument);
-                var jsonElement = new JsonElement<GameStateSerializationController>(LocalSaveStateName,loadResult);
-                state.SerializationController.Load(jsonElement);
+                var loadResult = JsonUtility.FromJson<GameStateSerializationData>(jsonDocument);
+                var jsonElement = new JsonElement<GameStateSerializationData>(LocalSaveStateName,loadResult);
+                foreach (var controller in baseStateControllers)
+                {
+                    controller.Load(jsonElement.SerializedData);
+                }
+
             }
 
         }
@@ -63,15 +73,19 @@ namespace Core
             return false;
         }
 
-        public static bool TrySaveStateWithDocument<T>(this GameState _, T serializedData)
+        public static bool TrySaveStateWithDocument(this GameState gameState, List<BaseStateController> stateControllers)
         {
-            var document = GenerateJsonDocument(serializedData);
+            foreach (var stateController in stateControllers)
+            {
+                stateController.Save();
+            }
+            var document = JsonUtils.GenerateJsonDocument(gameState.SerializationData);
             if (document != string.Empty)
             {
                 var saveResult = JsonUtils.SaveJsonContent(document, LocalSaveStateName);
                 if (saveResult.Success)
                 {
-                    Log.Trace(LogTag.State, "GameState save complete.");
+                    Log.Trace(LogTag.State, $"{gameState} save complete.");
                     return true;
                 }
                 Log.TraceError(LogTag.State, $"GameState: Save failed; expetion: {saveResult.Exception}");
@@ -79,11 +93,7 @@ namespace Core
             return false;
         }
 
-        private static string GenerateJsonDocument<T>(T serializedData)
-        {
-            var jsonElement = new JsonElement<T>(LocalSaveStateName, serializedData);
-            return JsonUtility.ToJson(jsonElement.SerilizedData);
-        }
+
     }
 
 }

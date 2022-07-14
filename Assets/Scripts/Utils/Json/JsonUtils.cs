@@ -55,7 +55,7 @@ namespace Utils.Json
             SaveJsonContentToDirectory(content, name, GetDefaultDataDirectory());
 
         public static JsonSaveResult SaveJsonElement<T>(JsonElement<T> jsonDoc) =>
-            SaveJsonContentToDirectory(JsonUtility.ToJson(jsonDoc.SerilizedData), jsonDoc.Name, GetDefaultDataDirectory());
+            SaveJsonContentToDirectory(JsonUtility.ToJson(jsonDoc.SerializedData), jsonDoc.Name, GetDefaultDataDirectory());
 
         public static JsonSaveResult SaveJsonContentToDirectory(string content, string name, string rootPath)
         {
@@ -83,6 +83,11 @@ namespace Utils.Json
             {
                 File.Delete(path);
             }
+        }
+
+        public static string GenerateJsonDocument<T>(T serializedData)
+        {
+            return JsonUtility.ToJson(serializedData);
         }
     }
 }

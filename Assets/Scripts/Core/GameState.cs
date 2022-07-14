@@ -1,39 +1,102 @@
 using System;
-using Behavior.Gameplay;
-using UnityEngine;
-using UnityEngine.UI;
-using Utils;
-using Utils.Json;
+using System.Collections.Generic;
+using Behavior.Gameplay.Controllers;
+using Core.State;
 using Utils.Logger;
 
 namespace Core
 {
-    public sealed class GameState : GameComponent
+    public sealed class GameState
     {
-        public GameStateSerializationController SerializationController { get; private set; }
+        private readonly List<BaseStateController> _controllers = new List<BaseStateController>();
+        public GameStateSerializationData SerializationData { get; private set; }
 
-        protected override void Awake()
+        public static GameState Instance { get; private set; }
+
+        public bool SavedWithoutUpload { get; private set; }
+
+
+        public ZombieController ZombieController { get; private set; }
+
+
+        private GameState()
         {
-            base.Awake();
-            Init();
+            SerializationData = new GameStateSerializationData();
+            AddControllers();
         }
 
-        private void OnDestroy()
+        private void AddControllers()
         {
-            Deinit();
+            ZombieController = Add(new ZombieController(this));
+
         }
 
         private void Init()
         {
-           SerializationController = new GameStateSerializationController();
-           this.TryLoadSavedState();
+            this.TryLoadSavedState(_controllers);
 
         }
 
-        private void Deinit()
+        private void DeInit()
         {
-            this.TrySaveStateWithDocument(SerializationController);
-            SerializationController = null;
+            this.TrySaveStateWithDocument(_controllers);
+            SerializationData = default;
+        }
+
+        public static GameState TryCreate()
+        {
+            if ( Instance == null )
+            {
+                Instance = new GameState();
+                Instance.Reload();
+            }
+            return Instance;
+        }
+        void Preload() {
+            Reset();
+            Init();
+            PostInit();
+        }
+
+        private void Reset()
+        {
+            foreach ( var controller in _controllers )
+            {
+                try
+                {
+                    controller.Reset();
+                } catch ( Exception e )
+                {
+                    Log.TraceException(e);
+                }
+            }
+        }
+
+        void PostInit() {
+            foreach ( var controller in _controllers )
+            {
+                try
+                {
+                    controller.PostInit();
+                } catch ( Exception e )
+                {
+                    Log.TraceException(e);
+                }
+            }
+        }
+
+        private void Reload() {
+
+            if ( this.TryLoadSavedState(_controllers) ) {
+                return;
+            }
+            Preload();
+
+        }
+
+        private T Add<T>(T controller) where T : BaseStateController {
+            _controllers.Add(controller);
+            return controller;
         }
 
     }
