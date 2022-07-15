@@ -3,7 +3,7 @@ using Starter;
 
 namespace Behavior.Gameplay
 {
-    public abstract BaseFarmComponent : BaseGameComponent<FarmStarter>
+    public abstract class BaseFarmComponent : BaseGameComponent<FarmStarter>
     {
     }
 }
